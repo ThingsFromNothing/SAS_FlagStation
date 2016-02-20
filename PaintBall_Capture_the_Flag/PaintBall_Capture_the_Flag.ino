@@ -10,7 +10,8 @@ Servo AirHorn;
 const int GreenButton = 13; // Green Teams Activation Button
 const int YellowButton = 12;
 const long GameTimer = 90000; // Game Time 15 Min in milli seconds
-//const int AirHorn = 10; // set for PWM to control a servo to sound an airhorn (9,10,11)
+const int AirHornOn = 180;
+const int AirHornOff = 0;
 const int YellowLED = 8;
 const int GreenLED = 7;
 
@@ -88,6 +89,7 @@ void loop()
    digitalWrite(GreenLED,HIGH);
    digitalWrite(YellowLED,LOW);
    //Blow the horn!!!
+   BlowTheHorn;
  }
  if (YellowTotalTime >=GameTimer)
  {
@@ -100,6 +102,13 @@ void loop()
 //**********
 
 // Start of functions
+void BlowTheHorn()
+{
+  AirHorn.write(AirHornOn);
+  delay(1000);
+  AirHorn.write(AirHornOff);
+  delay(20);
+}
 /*
 void greenButton()
 {
