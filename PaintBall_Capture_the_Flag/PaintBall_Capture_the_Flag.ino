@@ -2,10 +2,15 @@
 a team will need to press there coloured button and controll the box for a set time
 the time required is accumulated time for each team */
 
+// setup for includes
+#include <Servo.h>
+Servo AirHorn;
+
+// setup for variables and costants
 const int GreenButton = 13; // Green Teams Activation Button
 const int YellowButton = 12;
 const long GameTimer = 90000; // Game Time 15 Min in milli seconds
-const int AirHorn = 10; // set for PWM to control a servo to sound an airhorn (9,10,11)
+//const int AirHorn = 10; // set for PWM to control a servo to sound an airhorn (9,10,11)
 const int YellowLED = 8;
 const int GreenLED = 7;
 
@@ -22,9 +27,10 @@ void setup()
 {
   pinMode(GreenButton, INPUT);
   pinMode(YellowButton, INPUT);
-  pinMode(AirHorn, OUTPUT);
+  //pinMode(AirHorn, OUTPUT);
   pinMode(YellowLED, OUTPUT);
   pinMode(GreenLED, OUTPUT);
+  AirHorn.attach(10); // Attach the servo control to pwm pin 10
 }
 
 void loop()
