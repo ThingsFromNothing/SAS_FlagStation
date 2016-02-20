@@ -10,7 +10,8 @@ Servo AirHorn;
 const int GreenButton = 13; // Green Teams Activation Button
 const int YellowButton = 12;
 const long GameTimer = 90000; // Game Time 15 Min in milli seconds
-//const int AirHorn = 10; // set for PWM to control a servo to sound an airhorn (9,10,11)
+const int AirHornOn = 180; // Servo position to blow the horn
+const int AirHornOff = 0; // Servo position when horn is off
 const int YellowLED = 8;
 const int GreenLED = 7;
 
@@ -36,16 +37,24 @@ void setup()
 void loop()
 { // Start Loop
   // if the Green Button is pressed then Green is in control
-  if ((digitalRead(GreenButton) ==HIGH) && (GBState == LOW))
+  if ((digitalRead(GreenButton) ==HIGH) && (GBState == LOW)) // start the debounce
   {
     GBState = HIGH;
     delay(50);
-    if ((digitalRead(GreenButton) == HIGH) && (GBState == HIGH))
+    if ((digitalRead(GreenButton) == HIGH) && (GBState == HIGH)) // if the debounce was true
     {
-     InControl = 1; //Green incontrol of the flag station
+     // InControl = 1; //Green incontrol of the flag station
      currentMilli = millis();
+     if (InControl == 0)
+     {
+       BlowTheHorn(500);
+       BlowTheHorn(500);
+       delay(1000);
+     }
+     InControl = 1; // Green is now incontrol  
      digitalWrite(GreenLED,HIGH);
      GBState = LOW;//release control from the yellow
+     BlowTheHorn(500); // To signify that the team has taken control
      
     }
    else
@@ -60,10 +69,18 @@ void loop()
     delay(50);
     if ((digitalRead(YellowButton) == HIGH) && (YBState == HIGH))
     {
-     InControl = 2; //Yellow incontrol of the flag station
+     //InControl = 2; //Yellow incontrol of the flag station
      currentMilli = millis();
+     if (InControl == 0)
+     {
+       BlowTheHorn(500);
+       BlowTheHorn(500);
+       delay(1000);
+     }
+     InControl = 2;
      digitalWrite(YellowLED,HIGH);
      YBState = LOW;
+     BlowTheHorn(500);
     }
    else
    {
@@ -88,18 +105,27 @@ void loop()
    digitalWrite(GreenLED,HIGH);
    digitalWrite(YellowLED,LOW);
    //Blow the horn!!!
+   BlowTheHorn(2000);
  }
  if (YellowTotalTime >=GameTimer)
  {
    digitalWrite(YellowLED,HIGH);
    digitalWrite(GreenLED,LOW);
    //Blow The Horn
+   BlowTheHorn(2000);
  }
 } // End of loop
 
 //**********
 
 // Start of functions
+void BlowTheHorn(int Blast)
+{
+  AirHorn.write(AirHornOn);
+  delay(Blast);
+  AirHorn.write(AirHornOff);
+  delay(50);
+}
 /*
 void greenButton()
 {
