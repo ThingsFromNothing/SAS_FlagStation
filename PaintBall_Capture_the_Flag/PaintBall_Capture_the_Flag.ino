@@ -32,6 +32,7 @@ void setup()
   pinMode(YellowLED, OUTPUT);
   pinMode(GreenLED, OUTPUT);
   AirHorn.attach(10); // Attach the servo control to pwm pin 10
+  Serial.begin(9600); // setup serial for debuging *** remove once all is working ***
 }
 
 void loop()
@@ -47,6 +48,7 @@ void loop()
      currentMilli = millis();
      if (InControl == 0)
      {
+       Serial.print("The Game has Begun");
        BlowTheHorn(500);
        BlowTheHorn(500);
        delay(1000);
@@ -55,6 +57,7 @@ void loop()
      digitalWrite(GreenLED,HIGH);
      GBState = LOW;//release control from the yellow
      BlowTheHorn(500); // To signify that the team has taken control
+     Serial.print("Green has taken Control");
      
     }
    else
@@ -73,6 +76,7 @@ void loop()
      currentMilli = millis();
      if (InControl == 0)
      {
+       Serial.print("The Game has Begun");
        BlowTheHorn(500);
        BlowTheHorn(500);
        delay(1000);
@@ -81,6 +85,7 @@ void loop()
      digitalWrite(YellowLED,HIGH);
      YBState = LOW;
      BlowTheHorn(500);
+     Serial.print("Yellow is In Control");
     }
    else
    {
@@ -93,17 +98,20 @@ void loop()
  {
    GreenTotalTime = millis()-currentMilli;
    currentMilli = millis();
+   Serial.print(GreenTotalTime);
  }
  if (InControl = 2)
  {
    YellowTotalTime = millis()-currentMilli;
    currentMilli = millis();
+   Serial.print(YellowTotalTime);
  }
  // Finding a winner
  if (GreenTotalTime >= GameTimer)
  {
    digitalWrite(GreenLED,HIGH);
    digitalWrite(YellowLED,LOW);
+   Serial.print("Green is the Winner");
    //Blow the horn!!!
    BlowTheHorn(2000);
  }
@@ -111,6 +119,7 @@ void loop()
  {
    digitalWrite(YellowLED,HIGH);
    digitalWrite(GreenLED,LOW);
+   Serial.print("Yellow is the Winner");
    //Blow The Horn
    BlowTheHorn(2000);
  }
@@ -126,48 +135,4 @@ void BlowTheHorn(int Blast)
   AirHorn.write(AirHornOff);
   delay(50);
 }
-/*
-void greenButton()
-{
-    // if the Green Button is pressed then Gree is ion control
-  if ((GreenButton ==HIGH) && (GBState == LOW))
-  {
-    GBState = HIGH;
-    delay(50);
-    if ((GreenButton == HIGH) && (GBState == HIGH))
-    {
-     InControl = 1; //Green in control of the flag station
-     currentMilli = millis();
-     digitalWrite(GreenLED,HIGH);
-     YBState = LOW;//release control from the yellow
-    }
-   else
-   {
-     GBState = LOW;
-   }
-  }
-}
 
-void yellowButton()
-{
-    // if the yelow button is pressed then yellow is in control    
-  if ((YellowButton ==HIGH) && (YBState == LOW))
-  {
-    YBState = HIGH;
-    delay(50);
-    if ((YellowButton == HIGH) && (YBState == HIGH))
-    {
-     InControl = 2; //Green incontrol of the flag station
-     currentMilli = millis();
-     digitalWrite(YellowLED,HIGH);
-     GBState = LOW;
-    }
-   else
-   {
-     YBState = LOW;
-   }
-  }
- 
-}
-
-*/
