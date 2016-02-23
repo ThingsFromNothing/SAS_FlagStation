@@ -1,6 +1,6 @@
 /* a capture the flag style timer for paintball
-a team will need to press there coloured button and controll the box for a set time
-the time required is accumulated time for each team */
+ a team will need to press there coloured button and controll the box for a set time
+ the time required is accumulated time for each team */
 
 // setup for includes
 #include <Servo.h>
@@ -10,7 +10,7 @@ Servo AirHorn;
 const int GreenButton = 13; // Green Teams Activation Button
 const int YellowButton = 12; // Yellow Team Activation Button
 const int AirHornOut = 10;
-const long GameTimer = 90000; // Game Time 15 Min in milli seconds
+const long GameTimer = 9000; // Game Time 15 Min in milli seconds
 const int AirHornOn = 180; // Servo position to blow the horn
 const int AirHornOff = 0; // Servo position when horn is off
 const int YellowLED = 8;
@@ -21,6 +21,7 @@ int PrevGBState = LOW;
 int YBState = LOW; // for debounce control of Yellow Button
 int PrevYBState = LOW;
 int InControl = 0; // 0 is neutral 1 = Green 2 = Yellow
+boolean GameOver = false;
 
 unsigned long GreenTotalTime = 0;
 unsigned long YellowTotalTime = 0;
@@ -40,101 +41,111 @@ void setup()
 
 void loop()
 { // Start Loop
-  // if the Green Button is pressed then Green is in control
-  GBState = digitalRead(GreenButton);
-  if ((GBState == HIGH) && (PrevGBState == LOW)) // start the debounce
-  {
-    PrevGBState = HIGH;
-    delay(50);
+  while(!GameOver)
+  { // Start the while loop
+    Serial.print("Game Over is ");
+    Serial.println(GameOver);
+
+    // if the Green Button is pressed then Green is in control
     GBState = digitalRead(GreenButton);
-    if (((GBState == HIGH) && (PrevGBState == HIGH)) && (InControl != 1)) // if the debounce was true
+    if ((GBState == HIGH) && (PrevGBState == LOW)) // start the debounce
     {
-     // InControl = 1; //Green incontrol of the flag station
-     currentMilli = millis();
-     if (InControl == 0)
-     {
-       Serial.println("The Game has Begun");
-       BlowTheHorn(500);
-       BlowTheHorn(500);
-       delay(1000);
-     }
-     InControl = 1; // Green is now incontrol  
-     digitalWrite(GreenLED,HIGH);
-     //GBState = LOW;//release control from the yellow
-     PrevGBState = LOW;
-     BlowTheHorn(500); // To signify that the team has taken control
-     Serial.println("Green has taken Control");
-     
+      PrevGBState = HIGH;
+      delay(100);
+      GBState = digitalRead(GreenButton);
+      if (GBState == HIGH && PrevGBState == HIGH && InControl != 1) // if the debounce was true
+      {
+        // Green is in control of the flag station
+        currentMilli = millis();
+        if (InControl == 0)
+        {
+          Serial.println("The Game has Begun");
+          BlowTheHorn(500);
+          BlowTheHorn(500);
+          delay(1000);
+        }
+        InControl = 1; // Green is now in control  
+        digitalWrite(GreenLED,HIGH);
+        PrevGBState = LOW;
+        BlowTheHorn(500); // To signify that the team has taken control
+        Serial.println("Green has taken Control");
+
+      }
+      else
+      {
+        PrevGBState = LOW;
+      }
     }
-   else
-   {
-     PrevGBState = LOW;
-   }
-  }
-  // if the yelow button is pressed then yellow is in control
-  
-  YBState = digitalRead(YellowButton);
-  if ((YBState ==HIGH) && (PrevYBState == LOW))
-  {
-    PrevYBState = HIGH;
-    delay(50);
+    // if the yelow button is pressed then yellow is in control
+
     YBState = digitalRead(YellowButton);
-    if (((YBState == HIGH) && (PrevYBState == HIGH)) && (InControl !=2))
+    if (YBState == HIGH && PrevYBState == LOW)
     {
-     //InControl = 2; //Yellow incontrol of the flag station
-     currentMilli = millis();
-     if (InControl == 0)
-     {
-       Serial.println("The Game has Begun");
-       BlowTheHorn(500);
-       BlowTheHorn(500);
-       delay(1000);
-     }
-     InControl = 2;
-     digitalWrite(YellowLED,HIGH);
-     //YBState = LOW;
-     PrevYBState = LOW;
-     BlowTheHorn(500);
-     Serial.println("Yellow is In Control");
+      PrevYBState = HIGH;
+      delay(100);
+      YBState = digitalRead(YellowButton);
+      if (YBState == HIGH && PrevYBState == HIGH && InControl !=2)
+      {
+        //Yellow incontrol of the flag station
+        currentMilli = millis();
+        if (InControl == 0)
+        {
+          Serial.println("The Game has Begun");
+          BlowTheHorn(500);
+          BlowTheHorn(500);
+          delay(1000);
+        }
+        InControl = 2;
+        digitalWrite(YellowLED,HIGH);
+        PrevYBState = LOW;
+        BlowTheHorn(500);
+        Serial.println("Yellow is In Control");
+      }
+      else
+      {
+        PrevYBState = LOW;
+      }
     }
-   else
-   {
-     PrevYBState = LOW;
-   }
-  }
-  
-  // Keeping track of time
- if (InControl = 1)
- {
-   GreenTotalTime = GreenTotalTime + millis() - currentMilli;
-   currentMilli = millis();
-   Serial.print("Total Green Time ");
-   Serial.println(GreenTotalTime);
- }
- if (InControl = 2)
- {
-   YellowTotalTime = YellowTotalTime + millis() - currentMilli;
-   currentMilli = millis();
-   Serial.print("Total Yellow Time ");
-   Serial.println(YellowTotalTime);
- }
- // Finding a winner
- if (GreenTotalTime >= GameTimer)
- {
-   digitalWrite(GreenLED,HIGH);
-   digitalWrite(YellowLED,LOW);
-   Serial.println("Green is the Winner");
-   //Blow the horn!!!
-   BlowTheHorn(2000);
- }
- if (YellowTotalTime >=GameTimer)
- {
-   digitalWrite(YellowLED,HIGH);
-   digitalWrite(GreenLED,LOW);
-   Serial.println("Yellow is the Winner");
-   //Blow The Horn
-   BlowTheHorn(2000);
- }
+
+    // Keeping track of time
+    if (InControl == 1)
+    {
+      GreenTotalTime = GreenTotalTime + millis() - currentMilli;
+      currentMilli = millis();
+      Serial.print("Total Green Time ");
+      Serial.println(GreenTotalTime);
+      Serial.println(InControl);
+    }
+    else if (InControl == 2)
+    {
+      YellowTotalTime = YellowTotalTime + millis() - currentMilli;
+      currentMilli = millis();
+      Serial.print("Total Yellow Time ");
+      Serial.println(YellowTotalTime);
+      Serial.println(InControl);
+    }
+    // Finding a winner
+    if (GreenTotalTime >= GameTimer)
+    {
+      digitalWrite(GreenLED,HIGH);
+      digitalWrite(YellowLED,LOW);
+      Serial.println("Green is the Winner");
+      //Blow the horn!!!
+      BlowTheHorn(2000);
+      //Wait for the reset key
+      GameOver = true;
+    }
+    if (YellowTotalTime >=GameTimer)
+    {
+      digitalWrite(YellowLED,HIGH);
+      digitalWrite(GreenLED,LOW);
+      Serial.println("Yellow is the Winner");
+      //Blow The Horn
+      BlowTheHorn(2000);
+      //Wait for the reset Key
+      GameOver = true;
+    }
+  } // End the while loop
 } // End of loop
 
 //**********
@@ -147,4 +158,9 @@ void BlowTheHorn(int Blast)
   AirHorn.write(AirHornOff);
   delay(50);
 }
+
+//void WaitForReset()
+
+
+
 
