@@ -11,15 +11,15 @@ const int GreenButton = 13; // Green Teams Activation Button
 const int YellowButton = 12; // Yellow Team Activation Button
 const int AirHornOut = 10;
 const long GameTimer = 9000; // Game Time 15 Min in milli seconds
-const int AirHornOn = 180; // Servo position to blow the horn
+const int AirHornOn = 90; // Servo position to blow the horn
 const int AirHornOff = 0; // Servo position when horn is off
 const int YellowLED = 8;
 const int GreenLED = 7;
 
-int GBState = LOW; // for debounce control of Green Button
-int PrevGBState = LOW;
-int YBState = LOW; // for debounce control of Yellow Button
-int PrevYBState = LOW;
+int GBState = HIGH; // for debounce control of Green Button
+int PrevGBState = HIGH;
+int YBState = HIGH; // for debounce control of Yellow Button
+int PrevYBState = HIGH;
 int InControl = 0; // 0 is neutral 1 = Green 2 = Yellow
 boolean GameOver = false;
 
@@ -35,6 +35,9 @@ void setup()
   pinMode(AirHornOut, OUTPUT);
   pinMode(YellowLED, OUTPUT);
   pinMode(GreenLED, OUTPUT);
+  // use pullup resistors for the buttons
+  digitalWrite(GreenButton,HIGH);
+  digitalWrite(YellowButton,HIGH);
   AirHorn.attach(AirHornOut); // Attach the servo control to pwm pin 10
   Serial.begin(9600); // setup serial for debuging *** remove once all is working ***
 }
@@ -48,12 +51,12 @@ void loop()
 
     // if the Green Button is pressed then Green is in control
     GBState = digitalRead(GreenButton);
-    if ((GBState == HIGH) && (PrevGBState == LOW)) // start the debounce
+    if ((GBState == LOW) && (PrevGBState == HIGH)) // start the debounce
     {
-      PrevGBState = HIGH;
+      PrevGBState = GBState;
       delay(100);
       GBState = digitalRead(GreenButton);
-      if (GBState == HIGH && PrevGBState == HIGH && InControl != 1) // if the debounce was true
+      if (GBState == LOW && PrevGBState == LOW && InControl != 1) // if the debounce was true
       {
         // Green is in control of the flag station
         currentMilli = millis();
@@ -66,25 +69,25 @@ void loop()
         }
         InControl = 1; // Green is now in control  
         digitalWrite(GreenLED,HIGH);
-        PrevGBState = LOW;
+        PrevGBState = HIGH;
         BlowTheHorn(500); // To signify that the team has taken control
         Serial.println("Green has taken Control");
 
       }
       else
       {
-        PrevGBState = LOW;
+        PrevGBState = HIGH;
       }
     }
     // if the yelow button is pressed then yellow is in control
 
     YBState = digitalRead(YellowButton);
-    if (YBState == HIGH && PrevYBState == LOW)
+    if (YBState == LOW && PrevYBState == HIGH)
     {
-      PrevYBState = HIGH;
+      PrevYBState = YBState;
       delay(100);
       YBState = digitalRead(YellowButton);
-      if (YBState == HIGH && PrevYBState == HIGH && InControl !=2)
+      if (YBState == LOW && PrevYBState == LOW && InControl !=2)
       {
         //Yellow incontrol of the flag station
         currentMilli = millis();
@@ -97,13 +100,13 @@ void loop()
         }
         InControl = 2;
         digitalWrite(YellowLED,HIGH);
-        PrevYBState = LOW;
+        PrevYBState = HIGH;
         BlowTheHorn(500);
         Serial.println("Yellow is In Control");
       }
       else
       {
-        PrevYBState = LOW;
+        PrevYBState = HIGH;
       }
     }
 
