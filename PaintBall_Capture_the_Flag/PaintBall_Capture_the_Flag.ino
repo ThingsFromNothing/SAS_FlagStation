@@ -10,7 +10,7 @@ Servo AirHorn;
 const int GreenButton = 13; // Green Teams Activation Button
 const int YellowButton = 12; // Yellow Team Activation Button
 //const int AirHornOut = 10;
-const int GameBuzzer = 10;
+const int GameHorn: = 10;
 const long GameTimer = 9000; // Game Time 15 Min in milli seconds
 const int AirHornOn = 90; // Servo position to blow the horn
 const int AirHornOff = 0; // Servo position when horn is off
@@ -172,14 +172,26 @@ void BlowTheHorn(int Blast)
   delay(50);
 }
 
-void GameBuzzerCont(int BlastTime)
+void GameBuzzer(int BlastTime)
 {
 digitalWrite(GameBuzzer,HIGH);
 delay(BlastTime);
 digitalWrite(GameBuzzer,LOW);
 }
 
-void 
+void YellowBuzzer(int BlastTime)
+{
+digitalWrite(YellowHorn,HIGH);
+delay(BlastTime);
+digitalWrite(YellowHorn,LOW);
+}
+
+void GreenBuzzer(int BlastTime)
+{
+digitalWrite(GreenHorn,HIGH);
+delay(BlastTime);
+digitalWrite(GreenHorn,LOW);
+}
 
 //void WaitForReset()
 
