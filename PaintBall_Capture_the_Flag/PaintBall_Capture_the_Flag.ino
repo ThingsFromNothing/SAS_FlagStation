@@ -1,6 +1,30 @@
-/* a capture the flag style timer for paintball
+/*
+ *MODE 1* 
+ -capture the flag acumulated time-
+ 
+ a capture the flag style timer for paintball
  a team will need to press there coloured button and controll the box for a set time
- the time required is accumulated time for each team */
+ the time required is accumulated time for each team 
+*/
+
+/*
+*MODE 2* 
+-capture the flag total time-
+
+standard caputure the flag each team will need
+to press their button to "capture" the flag.
+team in control when the timer ends wins
+
+*/
+
+/*
+*MODE 3*
+-capture the flag deadman switch-
+
+
+
+*/
+
 
 // setup for includes
 #include <Servo.h>
