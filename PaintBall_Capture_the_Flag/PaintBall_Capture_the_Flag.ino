@@ -1,29 +1,61 @@
 /*
+
+                                      +-----+
+         +----[PWR]-------------------| USB |--+
+         |                            +-----+  |
+         |         GND/RST2  [ ][ ]            |
+         |       MOSI2/SCK2  [ ][ ]  A5/SCL[ ] |   C5 
+         |          5V/MISO2 [ ][ ]  A4/SDA[ ] |   C4 
+         |                             AREF[ ] |
+         |                              GND[ ] |
+         | [ ]N/C                    SCK/13[x] |   B5
+         | [ ]IOREF                 MISO/12[x] |   .
+         | [ ]RST                   MOSI/11[ ]~|   .
+         | [ ]3V3    +---+               10[x]~|   .
+         | [ ]5v    -| A |-               9[ ]~|   .
+         | [ ]GND   -| R |-               8[x] |   B0
+         | [ ]GND   -| D |-                    |
+         | [ ]Vin   -| U |-               7[x] |   D7
+         |          -| I |-               6[x]~|   .
+         | [ ]A0    -| N |-               5[x]~|   .
+         | [ ]A1    -| O |-               4[x] |   .
+         | [ ]A2     +---+           INT1/3[x]~|   .
+         | [ ]A3                     INT0/2[ ] |   .
+         | [ ]A4/SDA  RST SCK MISO     TX>1[ ] |   .
+         | [ ]A5/SCL  [ ] [ ] [ ]      RX<0[ ] |   D0
+         |            [ ] [ ] [ ]              |
+         |  UNO_R3    GND MOSI 5V  ____________/
+          \_______________________/
+
+
+*/
+
+/*
  *MODE 1* 
  -capture the flag acumulated time-
  
  a capture the flag style timer for paintball
  a team will need to press there coloured button and controll the box for a set time
  the time required is accumulated time for each team 
-*/
+ */
 
 /*
 *MODE 2* 
--capture the flag total time-
-
-standard caputure the flag each team will need
-to press their button to "capture" the flag.
-team in control when the timer ends wins
-
-*/
+ -capture the flag total time-
+ 
+ standard caputure the flag each team will need
+ to press their button to "capture" the flag.
+ team in control when the timer ends wins
+ 
+ */
 
 /*
 *MODE 3*
--capture the flag deadman switch-
-
-
-
-*/
+ -capture the flag deadman switch-
+ 
+ 
+ 
+ */
 
 
 // setup for includes
@@ -34,7 +66,7 @@ Servo AirHorn;
 const int GreenButton = 13; // Green Teams Activation Button
 const int YellowButton = 12; // Yellow Team Activation Button
 //const int AirHornOut = 10;
-const int GameHorn: = 10;
+const int GameHorn = 10;
 const long GameTimer = 9000; // Game Time 15 Min in milli seconds
 const int AirHornOn = 90; // Servo position to blow the horn
 const int AirHornOff = 0; // Servo position when horn is off
@@ -43,7 +75,7 @@ const int GreenLED = 7;
 const int GreenHorn = 3;
 const int GreenStrobe = 4;
 const int YellowHorn = 5;
-const int yellowStrobe = 6;
+const int YellowStrobe = 6;
 
 int GBState = HIGH; // for debounce control of Green Button
 int PrevGBState = HIGH;
@@ -61,8 +93,8 @@ void setup()
 {
   pinMode(GreenButton, INPUT);
   pinMode(YellowButton, INPUT);
- // pinMode(AirHornOut, OUTPUT);
-  pinMode(GameBuzzer, OUTPUT);
+  // pinMode(AirHornOut, OUTPUT);
+  pinMode(GameHorn, OUTPUT);
   pinMode(YellowLED, OUTPUT);
   pinMode(GreenLED, OUTPUT);
   pinMode(GreenHorn, OUTPUT);
@@ -72,7 +104,7 @@ void setup()
   // use pullup resistors for the buttons
   digitalWrite(GreenButton,HIGH);
   digitalWrite(YellowButton,HIGH);
-  AirHorn.attach(AirHornOut); // Attach the servo control to pwm pin 10
+  //AirHorn.attach(AirHornOut); // Attach the servo control to pwm pin 10
   Serial.begin(9600); // setup serial for debuging *** remove once all is working ***
 }
 
@@ -198,26 +230,27 @@ void BlowTheHorn(int Blast)
 
 void GameBuzzer(int BlastTime)
 {
-digitalWrite(GameBuzzer,HIGH);
-delay(BlastTime);
-digitalWrite(GameBuzzer,LOW);
+  digitalWrite(GameHorn,HIGH);
+  delay(BlastTime);
+  digitalWrite(GameHorn,LOW);
 }
 
 void YellowBuzzer(int BlastTime)
 {
-digitalWrite(YellowHorn,HIGH);
-delay(BlastTime);
-digitalWrite(YellowHorn,LOW);
+  digitalWrite(YellowHorn,HIGH);
+  delay(BlastTime);
+  digitalWrite(YellowHorn,LOW);
 }
 
 void GreenBuzzer(int BlastTime)
 {
-digitalWrite(GreenHorn,HIGH);
-delay(BlastTime);
-digitalWrite(GreenHorn,LOW);
+  digitalWrite(GreenHorn,HIGH);
+  delay(BlastTime);
+  digitalWrite(GreenHorn,LOW);
 }
 
 //void WaitForReset()
+
 
 
 
