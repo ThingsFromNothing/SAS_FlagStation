@@ -11,13 +11,13 @@ PROMINI
     D0  | [ ]0/RX                 GND[ ] |    
         | [ ]RST        SCL/A5[ ] RST[ ] |   C6
         | [ ]GND        SDA/A4[ ] VCC[ ] |    
-    D2  | [ ]2/INT0    ___         A3[ ] |   C3
+    D2  | [x]2/INT0    ___         A3[ ] |   C3
     D3  |~[x]3/INT1   /   \        A2[ ] |   C2
     D4  | [x]4       /PRO  \       A1[ ] |   C1
     D5  |~[x]5       \ MINI/       A0[ ] |   C0
-    D6  |~[x]6        \___/    SCK/13[x] |   B5
-    D7  | [x]7          A7[ ] MISO/12[x] |   B4
-    B0  | [x]8          A6[ ] MOSI/11[x]~|   B3
+    D6  |~[ ]6        \___/    SCK/13[x] |   B5
+    D7  | [ ]7          A7[ ] MISO/12[x] |   B4
+    B0  | [ ]8          A6[ ] MOSI/11[x]~|   B3
     B1  |~[ ]9                  SS/10[x]~|   B2
         |           [RST-BTN]            |    
         +--------------------------------+  
@@ -62,15 +62,15 @@ const int GreenButton = 13; // Green Teams Activation Button
 const int YellowButton = 12; // Yellow Team Activation Button
 //const int AirHornOut = 10;
 const int GameHorn = 10;
-const long GameTimer = 9000; // Game Time 15 Min in milli seconds
+const long GameTimer = 900000; // Game Time 15 Min in milli seconds
 const int AirHornOn = 90; // Servo position to blow the horn
 const int AirHornOff = 0; // Servo position when horn is off
 const int YellowLED = 8;
 const int GreenLED = 7;
-const int GreenHorn = 3;
-const int GreenStrobe = 4;
-const int YellowHorn = 5;
-const int YellowStrobe = 6;
+const int GreenHorn = 2;
+const int GreenStrobe = 3;
+const int YellowHorn = 4;
+const int YellowStrobe = 5;
 
 int GBState = HIGH; // for debounce control of Green Button
 int PrevGBState = HIGH;
@@ -109,6 +109,7 @@ void loop()
   { // Start the while loop
     Serial.print("Game Over is ");
     Serial.println(GameOver);
+    Serial.println(InControl);
 
     // if the Green Button is pressed then Green is in control
     GBState = digitalRead(GreenButton);
@@ -124,14 +125,18 @@ void loop()
         if (InControl == 0)
         {
           Serial.println("The Game has Begun");
-          BlowTheHorn(500);
-          BlowTheHorn(500);
-          delay(1000);
+          GreenBuzzer(1000);
+          delay(500);
+          GreenBuzzer(1000);
+          Serial.println("Green Buzzer");
+          //delay(1000);
         }
         InControl = 1; // Green is now in control  
-        digitalWrite(GreenLED,HIGH);
+        digitalWrite(GreenStrobe,HIGH);
+        digitalWrite(YellowStrobe,LOW);
+        Serial.println("Green Strobe");
         PrevGBState = HIGH;
-        BlowTheHorn(500); // To signify that the team has taken control
+        GreenBuzzer(500); // To signify that the team has taken control
         Serial.println("Green has taken Control");
 
       }
@@ -155,12 +160,16 @@ void loop()
         if (InControl == 0)
         {
           Serial.println("The Game has Begun");
-          BlowTheHorn(500);
-          BlowTheHorn(500);
-          delay(1000);
+          YellowBuzzer(1000);
+          delay(500);
+          YellowBuzzer(1000);
+          Serial.println("Yellow Buzzer");
+          //delay(1000);
         }
         InControl = 2;
-        digitalWrite(YellowLED,HIGH);
+        digitalWrite(YellowStrobe,HIGH);
+        digitalWrite(GreenStrobe,LOW);
+        Serial.println("Yellow Strobe");
         PrevYBState = HIGH;
         BlowTheHorn(500);
         Serial.println("Yellow is In Control");
@@ -191,21 +200,21 @@ void loop()
     // Finding a winner
     if (GreenTotalTime >= GameTimer)
     {
-      digitalWrite(GreenLED,HIGH);
-      digitalWrite(YellowLED,LOW);
+      digitalWrite(GreenStrobe,HIGH);
+      digitalWrite(YellowStrobe,LOW);
       Serial.println("Green is the Winner");
       //Blow the horn!!!
-      BlowTheHorn(2000);
+      GameBuzzer(2000);
       //Wait for the reset key
       GameOver = true;
     }
     if (YellowTotalTime >=GameTimer)
     {
-      digitalWrite(YellowLED,HIGH);
-      digitalWrite(GreenLED,LOW);
+      digitalWrite(YellowStrobe,HIGH);
+      digitalWrite(GreenStrobe,LOW);
       Serial.println("Yellow is the Winner");
       //Blow The Horn
-      BlowTheHorn(2000);
+      GameBuzzer(2000);
       //Wait for the reset Key
       GameOver = true;
     }
@@ -225,9 +234,11 @@ void BlowTheHorn(int Blast)
 
 void GameBuzzer(int BlastTime)
 {
-  digitalWrite(GameHorn,HIGH);
+  digitalWrite(GreenHorn,HIGH);
+  digitalWrite(YellowHorn,HIGH);
   delay(BlastTime);
-  digitalWrite(GameHorn,LOW);
+  digitalWrite(GreenHorn,LOW);
+  digitalWrite(YellowHorn,LOW);
 }
 
 void YellowBuzzer(int BlastTime)
