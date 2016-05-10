@@ -125,9 +125,9 @@ void loop()
         if (InControl == 0)
         {
           Serial.println("The Game has Begun");
-          GreenBuzzer(1000);
+          GreenBuzzer(2000);
           delay(500);
-          GreenBuzzer(1000);
+          GreenBuzzer(2000);
           Serial.println("Green Buzzer");
           //delay(1000);
         }
@@ -136,7 +136,7 @@ void loop()
         digitalWrite(YellowStrobe,LOW);
         Serial.println("Green Strobe");
         PrevGBState = HIGH;
-        GreenBuzzer(500); // To signify that the team has taken control
+        GreenBuzzer(1000); // To signify that the team has taken control
         Serial.println("Green has taken Control");
 
       }
@@ -160,9 +160,9 @@ void loop()
         if (InControl == 0)
         {
           Serial.println("The Game has Begun");
-          YellowBuzzer(1000);
+          YellowBuzzer(2000);
           delay(500);
-          YellowBuzzer(1000);
+          YellowBuzzer(2000);
           Serial.println("Yellow Buzzer");
           //delay(1000);
         }
@@ -171,7 +171,7 @@ void loop()
         digitalWrite(GreenStrobe,LOW);
         Serial.println("Yellow Strobe");
         PrevYBState = HIGH;
-        BlowTheHorn(500);
+        YellowBuzzer(1000);
         Serial.println("Yellow is In Control");
       }
       else
@@ -204,7 +204,7 @@ void loop()
       digitalWrite(YellowStrobe,LOW);
       Serial.println("Green is the Winner");
       //Blow the horn!!!
-      GameBuzzer(2000);
+      GameBuzzer(4000);
       //Wait for the reset key
       GameOver = true;
     }
@@ -214,7 +214,7 @@ void loop()
       digitalWrite(GreenStrobe,LOW);
       Serial.println("Yellow is the Winner");
       //Blow The Horn
-      GameBuzzer(2000);
+      GameBuzzer(4000);
       //Wait for the reset Key
       GameOver = true;
     }
